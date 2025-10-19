@@ -27,3 +27,30 @@ export interface UrlInfo {
   clicks: number;
   createdAt: string;
 }
+
+/////////////////////
+export interface ILink {
+  _id: string;
+  originalUrl: string;
+  shortCode: string;
+  customAlias?: string;
+  clicks: number;
+  createdAt: string;
+  createdBy: string;
+  expiresAt: string;
+  isActive: boolean;
+  title?: string;
+  description?: string;
+}
+
+export interface LinksResponse {
+  success: boolean;
+  data: ILink[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalLinks: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}

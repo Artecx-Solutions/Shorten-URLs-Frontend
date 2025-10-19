@@ -4,11 +4,17 @@ export interface CreateLinkRequest {
 }
 
 export interface CreateLinkResponse {
-  shortUrl: string;
-  originalUrl: string;
-  shortCode: string;
-  clicks: number;
-  message?: string; // Add optional message for existing links
+  success: boolean;
+  message: string;
+  data: {
+    originalUrl: string;
+    shortUrl: string;
+    shortCode: string;
+    createdAt: string;
+    expiresAt: string;
+    // Add clicks if your backend includes it
+    clicks?: number;
+  };
 }
 
 export interface LinkAnalytics {

@@ -3,6 +3,8 @@ import { BarChart3, Search } from 'lucide-react';
 import { linkService } from '../services/api';
 import { LinkAnalytics } from '../types/api';
 import { LoadingSpinner } from './LoadingSpinner';
+import { UserLinks } from './UserLinks';
+
 
 export const Analytics: React.FC = () => {
   const [shortCode, setShortCode] = useState('');
@@ -34,6 +36,12 @@ export const Analytics: React.FC = () => {
         <BarChart3 className="w-8 h-8 text-purple-600" />
         <h2 className="text-2xl font-bold text-gray-800">Link Analytics</h2>
       </div>
+
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+      <div className="py-8 px-4">
+        <UserLinks />
+      </div>
+    </div>
 
       <form onSubmit={fetchAnalytics} className="space-y-4 mb-6">
         <div>

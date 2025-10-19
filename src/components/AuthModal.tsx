@@ -147,7 +147,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
       />
       
       {/* Modal */}
-      <div className="relative bg-white/80 backdrop-blur-2xl rounded-[2.5rem] border border-white/40 shadow-2xl shadow-black/20 w-full max-w-md transform transition-all duration-500 scale-100">
+      <div className="relative bg-white/80 backdrop-blur-2xl rounded-[2.5rem] border border-white/40 shadow-2xl shadow-black/20 w-full max-w-lg transform transition-all duration-500 scale-100">
         {/* Header */}
         <div className="relative p-8 pb-0">
           <button
@@ -158,10 +158,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
           </button>
           
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl px-4 py-2 text-white shadow-lg shadow-blue-500/25 mb-4">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-bold">Welcome</span>
-            </div>
             
             <h2 className="text-3xl font-black bg-gradient-to-r from-gray-900 via-blue-700 to-purple-700 bg-clip-text text-transparent mb-2">
               {mode === 'login' ? 'Welcome Back' : 'Create Account'}
@@ -170,7 +166,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
             <p className="text-gray-600 font-medium">
               {mode === 'login' 
                 ? 'Sign in to access your dashboard' 
-                : 'Join thousands of users shortening links'
+                : ''
               }
             </p>
           </div>
@@ -222,7 +218,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  
                   <input
                     type="text"
                     name="name"
@@ -230,7 +226,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
                     onChange={handleSignupChange}
                     required
                     placeholder="Enter your full name"
-                    className="w-full pl-12 pr-4 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
+                    className="w-full pl-4 pr-6 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
                   />
                 </div>
               </div>
@@ -241,7 +237,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="email"
                   name="email"
@@ -249,64 +244,91 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
                   onChange={mode === 'login' ? handleLoginChange : handleSignupChange}
                   required
                   placeholder="Enter your email"
-                  className="w-full pl-12 pr-4 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
+                  className="w-full pl-6 pr-4 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
                 />
               </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-bold text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={mode === 'login' ? loginData.password : signupData.password}
-                  onChange={mode === 'login' ? handleLoginChange : handleSignupChange}
-                  required
-                  placeholder="Enter your password"
-                  minLength={6}
-                  className="w-full pl-12 pr-12 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+{mode === 'login' ? (
+  /* Login Mode - Single full width password field */
+  <div className="mb-6 w-full">
+    <label className="block text-sm font-bold text-gray-700 mb-2">
+      Password
+    </label>
+    <div className="relative">
+      <input
+        type={showPassword ? "text" : "password"}
+        name="password"
+        value={loginData.password}
+        onChange={handleLoginChange}
+        required
+        placeholder="Enter your password"
+        minLength={6}
+        className="w-full pl-6 pr-6 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
+      />
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+      </button>
+    </div>
+  </div>
+) : (
+  /* Signup Mode - Two columns for password and confirm password */
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div>
+      <label className="block text-sm font-bold text-gray-700 mb-2">
+        Password
+      </label>
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          name="password"
+          value={signupData.password}
+          onChange={handleSignupChange}
+          required
+          placeholder="Enter password"
+          minLength={6}
+          className="w-full pl-6 pr-6 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+        </button>
+      </div>
+    </div>
 
-            {mode === 'signup' && (
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    value={signupData.confirmPassword}
-                    onChange={handleSignupChange}
-                    required
-                    placeholder="Confirm your password"
-                    minLength={6}
-                    className="w-full pl-12 pr-12 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-            )}
+    <div>
+      <label className="block text-sm font-bold text-gray-700 mb-2">
+        Confirm Password
+      </label>
+      <div className="relative">
+        <input
+          type={showConfirmPassword ? "text" : "password"}
+          name="confirmPassword"
+          value={signupData.confirmPassword}
+          onChange={handleSignupChange}
+          required
+          placeholder="Confirm password"
+          minLength={6}
+          className="w-full pl-6 pr-6 py-4 bg-white/50 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-300 font-medium placeholder-gray-400"
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
             <button
               type="submit"

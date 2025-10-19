@@ -1,18 +1,38 @@
 // src/services/urlService.ts
 import { CreateUrlRequest, CreateUrlResponse, UrlInfo } from '../types/url';
 import config from '../config/environment';
+import { ILink, LinksResponse } from '../types/url';
+
+const API_URL = config.apiUrl
 
 export const urlService = {
+
   async createShortUrl(data: CreateUrlRequest): Promise<CreateUrlResponse> {
-    const response = await fetch(`${config.apiUrl}/url/shorten`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    
-    return await response.json();
+    console.log('📤 Sending request to:', `${API_URL}/links/shorten`); // Updated endpoint
+    console.log('📦 Request data:', data);
+
+    try {
+      const response = await fetch(`${API_URL}/links/shorten`, { // Updated to /links/shorten
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log('📥 Response data:', result);
+
+      if (!response.ok) {
+        throw new Error(result.message || `HTTP error! status: ${response.status}`);
+      }
+
+      return result;
+      
+    } catch (error) {
+      console.error('❌ Fetch error:', error);
+      throw new Error(`Failed to shorten URL: ${error.message}`);
+    }
   },
   
   async getUrlInfo(shortCode: string): Promise<{ success: boolean; data?: UrlInfo; message?: string }> {
@@ -28,5 +48,69 @@ export const urlService = {
       },
       body: JSON.stringify({ password }),
     });
-  }
+  },
+
+
+  // Get user's links
+  getUserLinks: async (page: number = 1, limit: number = 10): Promise<LinksResponse> => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(
+      `${API_URL}/links/my-links?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch links');
+    }
+
+    return response.json();
+  },
+
+  // Get link analytics
+  getLinkAnalytics: async (shortCode: string): Promise<{ success: boolean; data: ILink }> => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(
+      `${API_URL}/links/analytics/${shortCode}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch link analytics');
+    }
+
+    return response.json();
+  },
+
+  // Delete a link
+  deleteLink: async (shortCode: string): Promise<{ success: boolean; message: string }> => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(
+      `${API_URL}/links/${shortCode}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to delete link');
+    }
+
+    return response.json();
+  },
+
+
 };

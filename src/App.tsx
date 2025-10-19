@@ -1,4 +1,4 @@
-// Updated App.tsx (add these changes)
+// Updated App.tsx with authentication requirement for URL shortening
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Link2, BarChart3, Zap, Shield, Globe, Rocket, Star, TrendingUp, Users, Clock, Sparkles, User, LogOut } from 'lucide-react';
@@ -41,6 +41,7 @@ function App() {
     try {
       const userData = await authService.getCurrentUser();
       setUser(userData);
+      setShowAuthModal(false);
     } catch (error) {
       console.error('Failed to get user data:', error);
     }
@@ -49,6 +50,24 @@ function App() {
   const handleLogout = () => {
     authService.logout();
     setUser(null);
+  };
+
+  // Handle tab change - if trying to access shorten tab without auth, show modal
+  const handleTabChange = (tab: Tab) => {
+    if (tab === 'shorten' && !user) {
+      setShowAuthModal(true);
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
+  // Handle shorten button click in CTA section
+  const handleShortenClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      setActiveTab('shorten');
+    }
   };
 
   const features = [
@@ -176,7 +195,7 @@ function App() {
                       }`}></div>
                       
                       <button
-                        onClick={() => setActiveTab('shorten')}
+                        onClick={() => handleTabChange('shorten')}
                         className={`relative px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-3 z-10 min-w-[160px] justify-center ${
                           activeTab === 'shorten' ? 'text-white' : 'text-gray-600 hover:text-gray-800'
                         }`}
@@ -200,7 +219,32 @@ function App() {
 
                 {/* Tab Content */}
                 <div className="p-8 md:p-10">
-                  {activeTab === 'shorten' && <LinkShortener />}
+                  {activeTab === 'shorten' && (
+                    user ? (
+                      <LinkShortener />
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-12 border border-white/40 shadow-lg shadow-black/5">
+                          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-blue-500/40">
+                            <User className="w-10 h-10" />
+                          </div>
+                          <h3 className="text-2xl font-black text-gray-900 mb-4">
+                            Authentication Required
+                          </h3>
+                          <p className="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
+                            Please sign in to start shortening URLs and access all our premium features.
+                          </p>
+                          <button
+                            onClick={() => setShowAuthModal(true)}
+                            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 inline-flex items-center gap-3"
+                          >
+                            <User className="w-5 h-5" />
+                            Sign In to Continue
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  )}
                   {activeTab === 'analytics' && <Analytics />}
                 </div>
               </div>
@@ -274,14 +318,14 @@ function App() {
                   </h2>
                   <p className="text-blue-100 text-xl mb-10 max-w-2xl mx-auto font-medium leading-relaxed">
                     Join thousands of users who trust our platform for their link shortening needs. 
-                    Get started in seconds, no registration required.
+                    {user ? ' Start shortening your URLs now!' : ' Sign up to get started in seconds!'}
                   </p>
                   <button
-                    onClick={() => setActiveTab('shorten')}
+                    onClick={handleShortenClick}
                     className="group bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-3xl inline-flex items-center gap-3"
                   >
                     <Zap className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
-                    Start Shortening Now
+                    {user ? 'Start Shortening Now' : 'Sign Up to Get Started'}
                   </button>
                 </div>
               </div>
