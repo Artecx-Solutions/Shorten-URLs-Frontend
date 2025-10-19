@@ -1,49 +1,106 @@
-import React, { useState, useEffect } from 'react';
-import { Link2, BarChart3, Zap, Shield, Globe, Rocket, Star, TrendingUp, Users, Clock } from 'lucide-react';
+// Updated App.tsx with authentication requirement for URL shortening
+import  { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { Link2, BarChart3, Zap, Shield, Globe, Star, TrendingUp, Users, Clock, Sparkles, User, LogOut } from 'lucide-react';
 import { LinkShortener } from './components/LinkShortner';
 import { Analytics } from './components/Analytics';
+import { RedirectPage } from './pages/RedirectPage';
+import AuthModal from './components/AuthModal';
+import { authService } from './services/auth';
+import { User as UserType } from './types/auth';
 
 type Tab = 'shorten' | 'analytics';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('shorten');
   const [isVisible, setIsVisible] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [user, setUser] = useState<UserType | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
 
   useEffect(() => {
+    checkAuth();
     setIsVisible(true);
   }, []);
+
+  const checkAuth = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('token');
+      }
+    }
+    setLoadingUser(false);
+  };
+
+  const handleAuthSuccess = async () => {
+    try {
+      const userData = await authService.getCurrentUser();
+      setUser(userData);
+      setShowAuthModal(false);
+    } catch (error) {
+      console.error('Failed to get user data:', error);
+    }
+  };
+
+  const handleLogout = () => {
+    authService.logout();
+    setUser(null);
+  };
+
+  // Handle tab change - if trying to access shorten tab without auth, show modal
+  const handleTabChange = (tab: Tab) => {
+    if (tab === 'shorten' && !user) {
+      setShowAuthModal(true);
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
+  // Handle shorten button click in CTA section
+  const handleShortenClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      setActiveTab('shorten');
+    }
+  };
 
   const features = [
     {
       icon: <Zap className="w-6 h-6" />,
       title: "Lightning Fast",
       description: "Generate short links instantly with our optimized platform",
-      color: "from-yellow-500 to-orange-500",
-      bgColor: "bg-gradient-to-br from-yellow-50 to-orange-50",
+      color: "from-amber-500 to-orange-500",
+      bgColor: "bg-gradient-to-br from-amber-50/50 to-orange-50/50",
       delay: "0"
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
       title: "Advanced Analytics",
       description: "Track clicks, locations, and performance metrics in real-time",
-      color: "from-green-500 to-teal-500",
-      bgColor: "bg-gradient-to-br from-green-50 to-teal-50",
+      color: "from-emerald-500 to-teal-500",
+      bgColor: "bg-gradient-to-br from-emerald-50/50 to-teal-50/50",
       delay: "100"
     },
     {
       icon: <Shield className="w-6 h-6" />,
       title: "Secure & Reliable",
       description: "Enterprise-grade security with 99.9% uptime guarantee",
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
+      color: "from-blue-500 to-indigo-500",
+      bgColor: "bg-gradient-to-br from-blue-50/50 to-indigo-50/50",
       delay: "200"
     },
     {
       icon: <Globe className="w-6 h-6" />,
       title: "Global CDN",
       description: "Lightning-fast redirects worldwide with our global network",
-      color: "from-purple-500 to-pink-500",
-      bgColor: "bg-gradient-to-br from-purple-50 to-pink-50",
+      color: "from-violet-500 to-purple-500",
+      bgColor: "bg-gradient-to-br from-violet-50/50 to-purple-50/50",
       delay: "300"
     }
   ];
@@ -56,169 +113,294 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-75"></div>
-        <div className="absolute top-40 left-1/4 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-150"></div>
-      </div>
-
-      <div className="relative z-10 py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Header Section */}
-          <div className={`text-center mb-12 transition-all duration-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 border border-gray-200 shadow-sm mb-6">
-              <Rocket className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium text-gray-700">The Ultimate URL Shortener</span>
-              <Star className="w-4 h-4 text-yellow-500 fill-current" />
-            </div>
-            
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-800 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              Shorten URLs
-              <br />
-              <span className="text-3xl md:text-4xl">Like Never Before</span>
-            </h1>
-            
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Transform long URLs into short, memorable links with powerful analytics and 
-              <span className="font-semibold text-blue-600"> enterprise-grade performance</span>
-            </p>
+    <Routes>
+      <Route path="/redirect/:shortCode" element={<RedirectPage />} />
+      <Route path="/" element={
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 relative overflow-hidden">
+          <div className="fixed inset-0 overflow-hidden pointer-events-none">
           </div>
 
-          {/* Main Content Card */}
-          <div className={`bg-white/80 backdrop-blur-sm rounded-3xl border border-gray-200 shadow-xl mb-12 transition-all duration-700 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            {/* Tab Navigation */}
-            <div className="flex justify-center p-2" style={{paddingTop:45}}>
-<div className="relative bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl p-1 shadow-inner">
-  <div className="relative flex">
-    {/* Animated Background Slider */}
-    <div className={`absolute top-1 bottom-1 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg transition-all duration-500 ease-out ${
-      activeTab === 'shorten' ? 'left-1 w-[calc(50%-0.25rem)]' : 'left-[calc(50%+0.25rem)] w-[calc(50%-0.25rem)]'
-    }`}></div>
-    
-    <button
-      onClick={() => setActiveTab('shorten')}
-      className={`relative px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-3 z-10 ${
-        activeTab === 'shorten' ? 'text-white' : 'text-gray-600 hover:text-gray-800'
-      }`}
-    >
-      <Link2 className="w-5 h-5" />
-      Shorten URL
-    </button>
-    
-    <button
-      onClick={() => setActiveTab('analytics')}
-      className={`relative px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-3 z-10 ${
-        activeTab === 'analytics' ? 'text-white' : 'text-gray-600 hover:text-gray-800'
-      }`}
-    >
-      <BarChart3 className="w-5 h-5" />
-      Analytics
-    </button>
-  </div>
-</div>
-            </div>
-
-            {/* Tab Content */}
-            <div className="p-6 md:p-8">
-              {activeTab === 'shorten' && <LinkShortener />}
-              {activeTab === 'analytics' && <Analytics />}
-            </div>
-          </div>
-
-          {/* Stats Section */}
-          <div className={`grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 transition-all duration-700 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            {stats.map((stat, index) => (
-              <div key={index} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 text-center border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
-                <div className="text-blue-600 flex justify-center mb-2">
-                  {stat.icon}
-                </div>
-                <div className="text-2xl font-bold text-gray-800 mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>          
-
-          {/* Features Grid */}
-          <div className={`mb-16 transition-all duration-700 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                Why Choose Our URL Shortener?
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Packed with features designed to make link management effortless and powerful
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className={`group bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-105 hover:-translate-y-2`}
-                  style={{
-                    animationDelay: `${feature.delay}ms`,
-                    animation: isVisible ? `fadeInUp 0.6s ease-out ${feature.delay}ms both` : 'none'
-                  }}
-                >
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-white shadow-lg shadow-current/30 mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    {feature.icon}
+          <div className="relative z-10 py-8 px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className={`text-center mb-0 transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <div className="flex justify-between items-center mb-8">
+                  <div className="inline-flex items-center gap-3 bg-white/70 backdrop-blur-xl rounded-2xl px-6 py-3 border border-white/40 shadow-lg shadow-black/5">
+                    <Sparkles className="w-5 h-5 text-blue-600" />
+                    <span className="text-base font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      The Ultimate URL Shortener
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className="w-4 h-4 text-amber-500 fill-current" />
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-gray-900 transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors">
-                    {feature.description}
+
+                  {/* Auth Button */}
+                  {!loadingUser && (
+                    <div className="flex items-center gap-3">
+                      {user ? (
+                        <div className="flex items-center gap-3 bg-white/70 backdrop-blur-xl rounded-2xl px-4 py-2 border border-white/40 shadow-lg shadow-black/5">
+                          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-sm font-semibold text-gray-700">{user.name}</span>
+                          <button
+                            onClick={handleLogout}
+                            className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/50 hover:bg-white/70 text-gray-600 hover:text-gray-800 transition-all duration-300 hover:scale-110 border border-white/40"
+                            title="Logout"
+                          >
+                            <LogOut className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setShowAuthModal(true)}
+                          className="bg-white/70 backdrop-blur-xl rounded-2xl px-6 py-3 border border-white/40 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 hover:scale-105 group flex items-center gap-2"
+                        >
+                          <User className="w-4 h-4 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                          <span className="text-sm font-semibold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent group-hover:from-blue-600 group-hover:to-purple-600 transition-all">
+                            Sign In
+                          </span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                <h1 className="text-6xl md:text-7xl font-black bg-gradient-to-r from-gray-900 via-blue-700 to-purple-700 bg-clip-text text-transparent mb-6 leading-tight">
+                  Shorten URLs
+                </h1>
+                
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-medium">
+                  Transform long URLs into short, memorable links with powerful analytics and{' '}
+                  <span className="font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    enterprise-grade performance
+                  </span>
+                </p>
+              </div>
+
+            {/* Enhanced Main Content Card */}
+              <div className={`mb-16 transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                {/* Enhanced Tab Navigation */}
+                <div className="flex justify-center pt-8">
+                  <div className="relative bg-white/50 backdrop-blur-lg rounded-2xl p-1.5 shadow-lg shadow-black/5 border border-white/40">
+                    <div className="relative flex">
+                      {/* Animated Background Slider */}
+                      <div className={`absolute top-1 bottom-1 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg shadow-blue-500/25 transition-all duration-500 ease-out ${
+                        activeTab === 'shorten' ? 'left-1 w-[calc(50%-0.25rem)]' : 'left-[calc(50%+0.25rem)] w-[calc(50%-0.25rem)]'
+                      }`}></div>
+                      
+                      <button
+                        onClick={() => handleTabChange('shorten')}
+                        className={`relative px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-3 z-10 min-w-[160px] justify-center ${
+                          activeTab === 'shorten' ? 'text-white' : 'text-gray-600 hover:text-gray-800'
+                        }`}
+                      >
+                        <Link2 className="w-5 h-5" />
+                        Shorten URL
+                      </button>
+                      
+                      <button
+                        onClick={() => setActiveTab('analytics')}
+                        className={`relative px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center gap-3 z-10 min-w-[160px] justify-center ${
+                          activeTab === 'analytics' ? 'text-white' : 'text-gray-600 hover:text-gray-800'
+                        }`}
+                      >
+                        <BarChart3 className="w-5 h-5" />
+                        Analytics
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-8 md:p-10">
+                  {activeTab === 'shorten' && (
+                    user ? (
+                      <LinkShortener />
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-12 border border-white/40 shadow-lg shadow-black/5">
+                          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center text-white mx-auto mb-6 shadow-lg shadow-blue-500/40">
+                            <User className="w-10 h-10" />
+                          </div>
+                          <h3 className="text-2xl font-black text-gray-900 mb-4">
+                            Authentication Required
+                          </h3>
+                          <p className="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
+                            Please sign in to start shortening URLs and access all our premium features.
+                          </p>
+                          <button
+                            onClick={() => setShowAuthModal(true)}
+                            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 inline-flex items-center gap-3"
+                          >
+                            <User className="w-5 h-5" />
+                            Sign In to Continue
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  )}
+                  {activeTab === 'analytics' && <Analytics />}
+                </div>
+              </div>
+
+              {/* Enhanced Stats Section */}
+              <div className={`grid grid-cols-2 md:grid-cols-4 gap-6 mb-20 transition-all duration-1000 delay-500 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                {stats.map((stat, index) => (
+                  <div 
+                    key={index} 
+                    className="group relative"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-70 transition duration-300"></div>
+                    <div className="relative bg-white/70 backdrop-blur-xl rounded-2xl p-6 text-center border border-white/40 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 hover:scale-105">
+                      <div className="text-blue-600 flex justify-center mb-3">
+                        {stat.icon}
+                      </div>
+                      <div className="text-2xl font-black text-gray-900 mb-2">{stat.value}</div>
+                      <div className="text-sm text-gray-600 font-semibold">{stat.label}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>          
+
+              {/* Enhanced Features Grid */}
+              <div className={`mb-20 transition-all duration-1000 delay-700 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <div className="text-center mb-16">
+                  <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6">
+                    Why Choose Our URL Shortener?
+                  </h2>
+                  <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+                    Packed with features designed to make link management effortless and powerful
                   </p>
                 </div>
-              ))}
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {features.map((feature, index) => (
+                    <div
+                      key={index}
+                      className="group relative"
+                    >
+                      <div className={`absolute inset-0 bg-gradient-to-r ${feature.color} rounded-3xl blur-md opacity-30 group-hover:opacity-50 transition duration-300`}></div>
+                      <div
+                        className={`relative bg-white/70 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-lg shadow-black/5 hover:shadow-2xl hover:shadow-black/10 transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 h-full`}
+                        style={{
+                          animationDelay: `${feature.delay}ms`,
+                          animation: isVisible ? `fadeInUp 0.8s ease-out ${feature.delay}ms both` : 'none'
+                        }}
+                      >
+                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${feature.color} flex items-center justify-center text-white shadow-lg shadow-current/40 mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
+                          {feature.icon}
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 mb-4 group-hover:text-gray-800 transition-colors">
+                          {feature.title}
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed font-medium group-hover:text-gray-700 transition-colors">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Enhanced CTA Section */}
+              <div className={`relative text-center rounded-[2.5rem] p-12 md:p-16 text-white shadow-2xl shadow-blue-500/20 transition-all duration-1000 delay-900 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-[2.5rem]"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-[2.5rem]"></div>
+                <div className="relative z-10">
+                  <h2 className="text-4xl md:text-5xl font-black mb-6">
+                    Ready to Transform Your Links?
+                  </h2>
+                  <p className="text-blue-100 text-xl mb-10 max-w-2xl mx-auto font-medium leading-relaxed">
+                    Join thousands of users who trust our platform for their link shortening needs. 
+                    {user ? ' Start shortening your URLs now!' : ' Sign up to get started in seconds!'}
+                  </p>
+                  <button
+                    onClick={handleShortenClick}
+                    className="group bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-lg hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-2xl hover:shadow-3xl inline-flex items-center gap-3"
+                  >
+                    <Zap className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                    {user ? 'Start Shortening Now' : 'Sign Up to Get Started'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Enhanced Footer */}
+              <footer className={`text-center mt-16 transition-all duration-1000 delay-1100 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                <p className="text-lg font-semibold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
+                  Powered by Octo Global
+                </p>
+                <p className="text-sm mt-3 text-gray-500 font-medium">
+                  Fast • Secure • Reliable
+                </p>
+              </footer>
             </div>
-          </div>
+            </div>
 
-          {/* CTA Section */}
-          <div className={`text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 md:p-12 text-white shadow-2xl shadow-blue-500/30 transition-all duration-700 delay-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to Transform Your Links?
-            </h2>
-            <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
-              Join thousands of users who trust our platform for their link shortening needs. 
-              Get started in seconds, no registration required.
-            </p>
-            <button
-              onClick={() => setActiveTab('shorten')}
-              className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
-            >
-              <Zap className="w-5 h-5" />
-              Start Shortening Now
-            </button>
-          </div>
+          {/* Auth Modal */}
+          <AuthModal
+            isOpen={showAuthModal}
+            onClose={() => setShowAuthModal(false)}
+            onAuthSuccess={handleAuthSuccess}
+          />
 
-          {/* Footer */}
-          <footer className={`text-center mt-12 text-gray-600 transition-all duration-700 delay-1200 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <p className="text-sm">
-             Powerby Octo Global
-            </p>
-            <p className="text-xs mt-2 text-gray-500">
-              Fast • Secure • Reliable
-            </p>
-          </footer>
+          {/* Custom CSS for enhanced animations */}
+          <style jsx>{`
+            @keyframes fadeInUp {
+              from {
+                opacity: 0;
+                transform: translateY(40px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+            
+            @keyframes float {
+              0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+              }
+              50% {
+                transform: translateY(-20px) rotate(1deg);
+              }
+            }
+            
+            @keyframes float-delayed {
+              0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+              }
+              50% {
+                transform: translateY(20px) rotate(-1deg);
+              }
+            }
+            
+            @keyframes pulse-slow {
+              0%, 100% {
+                opacity: 0.15;
+              }
+              50% {
+                opacity: 0.25;
+              }
+            }
+            
+            .animate-float {
+              animation: float 8s ease-in-out infinite;
+            }
+            
+            .animate-float-delayed {
+              animation: float-delayed 10s ease-in-out infinite;
+            }
+            
+            .animate-pulse-slow {
+              animation: pulse-slow 6s ease-in-out infinite;
+            }
+          `}</style>
         </div>
-      </div>
-
-      {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
-    </div>
+      } />
+    </Routes>
   );
 }
 

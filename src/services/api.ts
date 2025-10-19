@@ -3,9 +3,10 @@ import {
   CreateLinkRequest, 
   CreateLinkResponse, 
   LinkAnalytics, 
-  ApiError,
   CreateLinkResponseType 
 } from '../types/api';
+import { metadataService } from './../services/metadataService';
+import { LinksResponse } from '../types/url';
 
 // Get API URL from environment variables with fallback
 const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api';
@@ -107,6 +108,30 @@ export const linkService = {
     return `${BACKEND_BASE_URL}/${shortCode}`;
   },
 
+    // Get user's links
+  getUserLinks: async (page: number = 1, limit: number = 10): Promise<LinksResponse> => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(
+      `${BACKEND_BASE_URL}/my-links?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch links');
+    }
+
+    return response.json();
+  },
+
   /**
    * Test backend connection
    */
@@ -129,6 +154,8 @@ export const linkService = {
     isDevelopment: import.meta.env.MODE === 'development'
   })
 };
+
+export { metadataService };
 
 // Export the api instance for direct use if needed
 export { api };

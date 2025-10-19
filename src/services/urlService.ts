@@ -8,17 +8,30 @@ const API_URL = config.apiUrl
 export const urlService = {
 
   async createShortUrl(data: CreateUrlRequest): Promise<CreateUrlResponse> {
-    console.log('📤 Sending request to:', `${API_URL}/links/shorten`); // Updated endpoint
+    const token = localStorage.getItem('token');
+    
+    console.log('📤 Sending request to:', `${API_URL}/links/shorten`);
     console.log('📦 Request data:', data);
+    console.log('🔐 Auth token present:', !!token);
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add authorization header if user is authenticated
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
-      const response = await fetch(`${API_URL}/links/shorten`, { // Updated to /links/shorten
+      const response = await fetch(`${API_URL}/links/shorten`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data),
       });
+
+      console.log('📥 Response status:', response.status);
+      console.log('📥 Response ok:', response.ok);
 
       const result = await response.json();
       console.log('📥 Response data:', result);
@@ -29,7 +42,7 @@ export const urlService = {
 
       return result;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Fetch error:', error);
       throw new Error(`Failed to shorten URL: ${error.message}`);
     }
@@ -55,7 +68,7 @@ export const urlService = {
   getUserLinks: async (page: number = 1, limit: number = 10): Promise<LinksResponse> => {
     const token = localStorage.getItem('token');
     const response = await fetch(
-      `${API_URL}/links/my-links?page=${page}&limit=${limit}`,
+      `${API_URL}/my-links?page=${page}&limit=${limit}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -67,7 +67,7 @@ export const LinkShortener: React.FC = () => {
 
   const handleTestLink = () => {
     if (shortLink?.data?.shortCode) {
-      navigate(`/redirect/${shortLink.data.shortCode}`);
+      navigate(`/${shortLink.data.shortCode}`);
     }
   };
 

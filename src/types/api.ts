@@ -17,13 +17,6 @@ export interface CreateLinkResponse {
   };
 }
 
-export interface LinkAnalytics {
-  originalUrl: string;
-  shortCode: string;
-  clicks: number;
-  createdAt: string;
-  isActive: boolean;
-}
 
 export interface ApiError {
   error: string;
@@ -41,13 +34,6 @@ export interface ApiError {
   }>;
 }
 
-export interface PageMetadata {
-  title?: string;
-  description?: string;
-  keywords?: string;
-  image?: string;
-}
-
 export interface LinkAnalytics {
   originalUrl: string;
   shortCode: string;
@@ -55,6 +41,36 @@ export interface LinkAnalytics {
   createdAt: string;
   isActive: boolean;
   metadata?: PageMetadata; // Add metadata field
+}
+
+// types/api.ts
+export interface PageMetadata {
+  title: string;
+  description: string;
+  image: string;
+  keywords: string;
+  siteName: string;
+  url: string;
+}
+
+export interface LinkAnalytics {
+  success: boolean;
+  data: {
+    originalUrl: string;
+    shortCode: string;
+    clicks: number;
+    createdAt: string;
+    expiresAt: string;
+    isActive: boolean;
+    title?: string;
+    description?: string;
+  };
+}
+
+export interface MetadataResponse {
+  success: boolean;
+  metadata: PageMetadata;
+  message?: string;
 }
 
 // Union type for create link response
