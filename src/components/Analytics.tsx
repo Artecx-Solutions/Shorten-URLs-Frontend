@@ -1,7 +1,7 @@
 // components/Analytics.tsx
 import React, { useState, useEffect } from 'react';
-import { Link2, Copy, Check, BarChart3, Trash2, Calendar, Eye, ExternalLink, ChevronLeft, ChevronRight, Filter, Search, Users, Globe, Clock } from 'lucide-react';
-import { linkService } from '../services/api';
+import { Link2, Copy, Check, Trash2, Calendar, Eye, ExternalLink, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { urlService } from '../services/urlService'; // Import urlService, not linkService
 import { ILink, LinksResponse } from '../types/url';
 import { LoadingSpinner } from './LoadingSpinner';
 
@@ -25,13 +25,22 @@ export const Analytics: React.FC = () => {
     try {
       setLoading(true);
       setError('');
-      const response: LinksResponse = await linkService.getUserLinks(page, 10);
-      setLinks(response.data);
-      setPagination(response.pagination);
-      setCurrentPage(response.pagination.currentPage);
-    } catch (err) {
-      setError('Failed to load your links. Please try again.');
-      console.error('Error fetching links:', err);
+      console.log('🔄 Fetching links for page:', page);
+      
+      const response: LinksResponse = await urlService.getUserLinks(page, 10);
+      
+      console.log('📊 Response received:', response);
+      
+      if (response.success) {
+        setLinks(response.data);
+        setPagination(response.pagination);
+        setCurrentPage(response.pagination.currentPage);
+      } else {
+        throw new Error(response.message || 'Failed to load links');
+      }
+    } catch (err: any) {
+      console.error('❌ Error in fetchUserLinks:', err);
+      setError(err.message || 'Failed to load your links. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -58,10 +67,8 @@ export const Analytics: React.FC = () => {
     }
 
     try {
-      await linkService.deleteLink(shortCode);
-      // Remove the deleted link from the state
-      setLinks(links.filter(link => link.shortCode !== shortCode));
-      // Refresh the list to update pagination
+      await urlService.deleteLink(shortCode);
+      // Refresh the list
       fetchUserLinks(currentPage);
     } catch (err: any) {
       setError(err.message || 'Failed to delete link');
@@ -125,6 +132,7 @@ export const Analytics: React.FC = () => {
             Manage and track all your shortened URLs in one place
           </p>
         </div>
+        
         <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl px-6 py-3 text-white">
           <p className="font-semibold text-center lg:text-left">
             Total Links: {pagination.totalLinks}
@@ -132,10 +140,18 @@ export const Analytics: React.FC = () => {
         </div>
       </div>
 
+      {/* Debug Info - Remove in production */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+        <p className="text-sm text-yellow-800">
+          <strong>Debug Info:</strong> Showing {filteredLinks.length} of {links.length} links. 
+          Current page: {currentPage}, Total pages: {pagination.totalPages}
+        </p>
+      </div>
+
+      {/* Rest of your component remains the same */}
       {/* Filters and Search */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mb-6">
         <div className="flex flex-col lg:flex-row gap-4">
-          {/* Search */}
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -196,7 +212,7 @@ export const Analytics: React.FC = () => {
       )}
 
       {/* Links Grid */}
-      {filteredLinks.length === 0 ? (
+      {filteredLinks.length === 0 && !loading ? (
         <div className="text-center py-16 bg-white rounded-2xl shadow-lg border border-gray-200">
           <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Link2 className="w-10 h-10 text-gray-400" />
@@ -208,14 +224,6 @@ export const Analytics: React.FC = () => {
               : 'Start shortening URLs to see them here'
             }
           </p>
-          {!searchTerm && filterStatus === 'all' && (
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-600 transition duration-200"
-            >
-              Create Your First Link
-            </button>
-          )}
         </div>
       ) : (
         <>
@@ -297,7 +305,6 @@ export const Analytics: React.FC = () => {
                             </div>
                             
                             <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4" />
                               <span className="text-xs bg-gray-100 px-2 py-1 rounded">
                                 Expires: {formatDate(link.expiresAt)}
                               </span>
@@ -333,16 +340,6 @@ export const Analytics: React.FC = () => {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
-
-                      <a
-                        href={`/redirect/${link.shortCode}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-xl hover:bg-blue-100 transition-all duration-200 font-medium"
-                        title="Test link"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
                     </div>
                   </div>
                 </div>
