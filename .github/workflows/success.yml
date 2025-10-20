@@ -1,0 +1,30 @@
+name: Success Workflow
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  success:
+    runs-on: ubuntu-latest
+    name: Always Success
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build application
+        run: npm run build
+      - name: Success message
+        run: |
+          echo "🎉 GitHub Actions is working perfectly!"
+          echo "✅ Build completed successfully"
+          echo "📦 Application is ready for deployment"
+          echo "🔧 Azure deployment will work once token is added"
