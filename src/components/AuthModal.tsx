@@ -1,6 +1,6 @@
 // components/AuthModal.tsx
 import React, { useState, useEffect } from 'react';
-import { X, Zap, Sparkles, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { X, User, Eye, EyeOff, Zap } from 'lucide-react';
 import { authService } from '../services/auth';
 import { LoginRequest, SignupRequest } from '../types/auth';
 

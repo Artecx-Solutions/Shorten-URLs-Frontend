@@ -5,18 +5,16 @@ export interface CreateLinkRequest {
 
 export interface CreateLinkResponse {
   success: boolean;
-  message: string;
-  data: {
+  message?: string;
+  data?: {
     originalUrl: string;
     shortUrl: string;
     shortCode: string;
     createdAt: string;
     expiresAt: string;
-    // Add clicks if your backend includes it
-    clicks?: number;
+    clicks: number;
   };
 }
-
 
 export interface ApiError {
   error: string;
@@ -35,25 +33,6 @@ export interface ApiError {
 }
 
 export interface LinkAnalytics {
-  originalUrl: string;
-  shortCode: string;
-  clicks: number;
-  createdAt: string;
-  isActive: boolean;
-  metadata?: PageMetadata; // Add metadata field
-}
-
-// types/api.ts
-export interface PageMetadata {
-  title: string;
-  description: string;
-  image: string;
-  keywords: string;
-  siteName: string;
-  url: string;
-}
-
-export interface LinkAnalytics {
   success: boolean;
   data: {
     originalUrl: string;
@@ -65,6 +44,16 @@ export interface LinkAnalytics {
     title?: string;
     description?: string;
   };
+  originalUrl: string;
+}
+
+export interface PageMetadata {
+  title: string;
+  description: string;
+  image: string;
+  keywords: string;
+  siteName: string;
+  url: string;
 }
 
 export interface MetadataResponse {

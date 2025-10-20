@@ -68,7 +68,7 @@ export const urlService = {
   getUserLinks: async (page: number = 1, limit: number = 10): Promise<LinksResponse> => {
     const token = localStorage.getItem('token');
     const response = await fetch(
-      `${API_URL}/my-links?page=${page}&limit=${limit}`,
+      `${API_URL}/links/my-links?page=${page}&limit=${limit}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,

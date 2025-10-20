@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link2, Copy, ExternalLink, RefreshCw, Sparkles, CheckCircle, Zap, ArrowLeft } from 'lucide-react';
+import { Link2, Copy, ExternalLink, CheckCircle, ArrowLeft, Sparkles } from 'lucide-react';
 import { urlService } from '../services/urlService';
 import { CreateLinkResponse } from '../types/api';
 import { LoadingSpinner } from './LoadingSpinner';
@@ -24,7 +24,7 @@ export const LinkShortener: React.FC = () => {
     try {
       const result = await urlService.createShortUrl({
         originalUrl: originalUrl.trim(),
-        customAlias: customAlias.trim() || undefined,
+        customCode: customAlias.trim() || undefined,
       });
       
       console.log('🔍 Received result:', result); // Debug log

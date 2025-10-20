@@ -1,6 +1,6 @@
 import  { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Link2, BarChart3, Zap, Shield, Globe, Rocket, Star, TrendingUp, Users, Clock, Sparkles, User, LogOut } from 'lucide-react';
+import { Link2, BarChart3, Star, Sparkles, User, LogOut } from 'lucide-react';
 import { LinkShortener } from './components/LinkShortner';
 import { Analytics } from './components/Analytics';
 import { RedirectPage } from './pages/RedirectPage';

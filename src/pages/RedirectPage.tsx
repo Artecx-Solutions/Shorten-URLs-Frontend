@@ -8,10 +8,8 @@ import {
   AlertCircle, 
   FileText,
   Tag,
-  Image as ImageIcon,
   Globe,
   Eye,
-  Calendar,
   Link2
 } from 'lucide-react';
 import { linkService } from '../services/api';
