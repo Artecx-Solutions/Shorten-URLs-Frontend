@@ -16,6 +16,20 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
+      sourcemap: false,
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            router: ['react-router-dom']
+          }
+        }
+      }
+    },
     // Expose env variables to the client
     define: {
       __APP_ENV__: JSON.stringify(env.APP_ENV),
