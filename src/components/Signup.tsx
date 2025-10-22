@@ -1,3 +1,4 @@
+// components/Signup.tsx
 import React, { useState } from 'react';
 import { authService } from '../services/auth';
 import { SignupRequest } from '../types/auth';
@@ -9,7 +10,7 @@ interface SignupProps {
 
 const Signup: React.FC<SignupProps> = ({ onToggleMode, onSignupSuccess }) => {
   const [formData, setFormData] = useState<SignupRequest>({
-    fullName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -81,12 +82,12 @@ const Signup: React.FC<SignupProps> = ({ onToggleMode, onSignupSuccess }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="fullName">Full Name</label>
+            <label htmlFor="name">Full Name</label>
             <input
               type="text"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               required
               placeholder="Enter your full name"
