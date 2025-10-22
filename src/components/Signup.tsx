@@ -10,7 +10,7 @@ interface SignupProps {
 
 const Signup: React.FC<SignupProps> = ({ onToggleMode, onSignupSuccess }) => {
   const [formData, setFormData] = useState<SignupRequest>({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -82,12 +82,12 @@ const Signup: React.FC<SignupProps> = ({ onToggleMode, onSignupSuccess }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
               onChange={handleChange}
               required
               placeholder="Enter your full name"

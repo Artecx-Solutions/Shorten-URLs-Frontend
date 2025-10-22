@@ -25,7 +25,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
   });
 
   const [signupData, setSignupData] = useState<SignupRequest>({
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -45,7 +45,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
 
   const resetForms = () => {
     setLoginData({ email: '', password: '' });
-    setSignupData({ name: '', email: '', password: '', confirmPassword: '' });
+    setSignupData({ fullName: '', email: '', password: '', confirmPassword: '' });
     setError('');
     setShowPassword(false);
     setShowConfirmPassword(false);
@@ -222,7 +222,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onAuthSuccess })
                   <input
                     type="text"
                     name="name"
-                    value={signupData.name}
+                    value={signupData.fullName}
                     onChange={handleSignupChange}
                     required
                     placeholder="Enter your full name"
