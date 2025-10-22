@@ -99,7 +99,7 @@ const Login: React.FC<LoginProps> = ({ onToggleMode, onLoginSuccess }) => {
               Sign up
             </button>
           </p>
-        </div> 
+        </div>
       </div>
     </div>
   );

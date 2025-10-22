@@ -11,8 +11,8 @@ import { LinksResponse } from '../types/url';
 // Get API URL from environment variables with fallback
 const API_BASE_URL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api';
 const BACKEND_BASE_URL = (import.meta.env.VITE_BACKEND_URL as string) || 'http://localhost:5000';
- 
-console.log('Environment Configuration:', {
+
+console.log('🔧 Environment Configuration:', {
   API_URL: import.meta.env.VITE_API_URL,
   BACKEND_URL: import.meta.env.VITE_BACKEND_URL,
   NODE_ENV: import.meta.env.MODE
