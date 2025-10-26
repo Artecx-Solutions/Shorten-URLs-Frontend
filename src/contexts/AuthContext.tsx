@@ -1,57 +1,72 @@
 // contexts/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService } from '../services/authService';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: 'admin' | 'user';
+  createdAt: string;
+}
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  user: any;
-  login: (token: string, userData: any) => void;
+  user: User | null;
+  login: (token: string, userData: User) => void;
   logout: () => void;
-  checkAuth: () => boolean;
+  isAuthenticated: boolean;
+  isAdmin: boolean;
+  loading: boolean; // Add loading state
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(null);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
-  // Check authentication status on component mount
   useEffect(() => {
-    checkAuthStatus();
+    // Check for stored user data on app load
+    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('accessToken');
+    
+    if (storedUser && token) {
+      try {
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        // Clear invalid data
+        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
+      }
+    }
+    setLoading(false); // Set loading to false after checking
   }, []);
 
-  const checkAuthStatus = () => {
-    const authenticated = authService.isAuthenticated();
-    const userData = authService.getStoredUser();
-    
-    setIsAuthenticated(authenticated);
-    setUser(userData);
-    
-    return authenticated;
-  };
-
-  const login = (token: string, userData: any) => {
-    authService.saveAuthData({
-      accessToken: token, user: userData,
-      message: ''
-    });
-    setIsAuthenticated(true);
+  const login = (token: string, userData: User) => {
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
   const logout = () => {
-    authService.logout();
-    setIsAuthenticated(false);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
-  const checkAuth = () => {
-    return checkAuthStatus();
-  };
+  const isAuthenticated = !!user;
+  const isAdmin = user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, checkAuth }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      isAuthenticated,
+      isAdmin,
+      loading // Include loading in context
+    }}>
       {children}
     </AuthContext.Provider>
   );

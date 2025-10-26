@@ -28,7 +28,7 @@ const LinkPreviewPage: React.FC = () => {
   const [linkInfo, setLinkInfo] = useState<LinkInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
-  const [countdown, setCountdown] = useState(100);
+  const [countdown, setCountdown] = useState(10);
   const [redirecting, setRedirecting] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false); 
 
