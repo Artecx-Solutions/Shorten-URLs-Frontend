@@ -1,8 +1,7 @@
-export interface User {
-  id: string;
-  name: string;
+export interface SignUpRequest {
+  fullName: string;
   email: string;
-    createdAt?: string;
+  password: string;
 }
 
 export interface LoginRequest {
@@ -10,23 +9,17 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface SignupRequest {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword?: string;
-}
-
 export interface AuthResponse {
-  success: boolean;
-  message: string;
-  user?: User;
-  token?: string;
+  accessToken: string;
+  user: {
+    id: string;
+    fullName: string;
+    email: string;
+    role: string;
+  };
 }
 
-export interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  loading: boolean;
+export interface AuthError {
+  message: string;
+  status?: number;
 }
