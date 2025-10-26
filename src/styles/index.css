@@ -15,13 +15,22 @@ body {
 
 .para{
   line-height: 30px !important;
-    font-weight: 300  !important;
+    font-weight: 400  !important;
     color: #000  !important;
 }
 
 .padding1{
       padding: 10px 25px !important;
     color: #fff !important;
+}
+
+input:-internal-autofill-selected {
+    background-image: none !important;
+    background-color: transparent !important;
+}
+
+.lineH{
+  line-height: 58px !important;
 }
 
 

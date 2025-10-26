@@ -3,43 +3,27 @@ import React, { useState } from 'react';
 import { 
   Layout, 
   Menu, 
-  Button, 
-  Avatar, 
-  Dropdown, 
-  Space,
-  Typography,
   theme,
   Grid
 } from 'antd';
 import { 
-  MenuFoldOutlined, 
-  MenuUnfoldOutlined,
   DashboardOutlined,
   LinkOutlined,
-  BarChartOutlined,
-  UserOutlined,
   TeamOutlined,
   SettingOutlined,
-  LogoutOutlined,
-  BellOutlined,
-  SearchOutlined
+  BarChartOutlined
 } from '@ant-design/icons';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { authService } from '../../services/authService';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import AdminHeader from './AdminHeader'; // Import the new header
 
-const { Header, Sider, Content, Footer } = Layout;
-const { Text } = Typography;
+const { Sider, Content, Footer } = Layout;
 const { useBreakpoint } = Grid;
 
-interface AdminLayoutProps {
-  children: React.ReactNode;
-}
-
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const user = authService.getStoredUser();
   const screens = useBreakpoint();
   
   const {
@@ -48,19 +32,29 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   const menuItems = [
     {
-      key: '',
+      key: '/admin/dashboard',
       icon: <DashboardOutlined />,
       label: 'Dashboard',
     },
     {
-      key: '',
+      key: '/admin/links',
       icon: <LinkOutlined />,
       label: 'Link Management',
     },
     {
-      key: '',
+      key: '/admin/users',
       icon: <TeamOutlined />,
       label: 'User Management',
+    },
+    {
+      key: '/admin/analytics',
+      icon: <BarChartOutlined />,
+      label: 'Analytics',
+    },
+    {
+      key: '/admin/settings',
+      icon: <SettingOutlined />,
+      label: 'Settings',
     },
   ];
 
@@ -68,36 +62,20 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     navigate(key);
   };
 
-  const handleLogout = () => {
-    authService.logout();
-    navigate('/login');
+  const handleThemeChange = (dark: boolean) => {
+    setIsDarkTheme(dark);
+    // You can implement theme switching logic here
+    console.log('Theme changed to:', dark ? 'dark' : 'light');
   };
 
-  const userMenuItems = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: 'Profile',
-    },
-    {
-      type: 'divider' as const,
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: 'Logout',
-      onClick: handleLogout,
-    },
-  ];
-
   return (
-    <Layout className="min-h-screen">
+    <Layout className="min-h-screen" style={{ background: isDarkTheme ? '#141414' : '#f5f5f5' }}>
       {/* Sidebar */}
       <Sider 
         trigger={null} 
         collapsible 
         collapsed={collapsed}
-        width={250}
+        width={280}
         breakpoint="lg"
         collapsedWidth={screens.lg ? 80 : 0}
         onBreakpoint={(broken) => {
@@ -109,23 +87,18 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         }}
         className="border-r border-gray-200"
       >
-        {/* Logo */}
-        <div className="flex items-center justify-center p-4 border-b border-gray-200">
-          {!collapsed ? (
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <LinkOutlined className="text-white text-lg" />
+        {/* Logo in sidebar (optional, since we have it in header) */}
+        {!collapsed && (
+          <div className="flex items-center justify-center p-6 border-b border-gray-200">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                <span className="text-white font-bold text-lg">ML</span>
               </div>
-              <Text strong className="text-lg bg-gradient-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent">
-                MyUrl.life Admin
-              </Text>
+              <span className="text-sm font-semibold text-gray-700">MyUrl.life</span>
+              <div className="text-xs text-gray-500 mt-1">Admin System</div>
             </div>
-          ) : (
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <LinkOutlined className="text-white text-lg" />
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Navigation Menu */}
         <Menu
@@ -136,64 +109,20 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           style={{ 
             border: 'none',
             marginTop: '16px',
+            background: 'transparent',
           }}
-          className="sidebar-menu"
+          className="sidebar-menu px-2"
         />
       </Sider>
 
       <Layout>
-        {/* Header */}
-        <Header 
-          style={{ 
-            padding: '0 24px', 
-            background: colorBgContainer,
-            borderBottom: '1px solid #f0f0f0',
-          }}
-          className="shadow-sm"
-        >
-          <div className="flex items-center justify-between h-full">
-            <div className="flex items-center">
-              <Button
-                type="text"
-                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                onClick={() => setCollapsed(!collapsed)}
-                style={{
-                  fontSize: '16px',
-                  width: 64,
-                  height: 64,
-                }}
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              
-              {/* User Menu */}
-              <Dropdown
-                menu={{ items: userMenuItems }}
-                placement="bottomRight"
-                trigger={['click']}
-              >
-                <Space className="cursor-pointer hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors">
-                  <Avatar 
-                    icon={<UserOutlined />}
-                    src={user?.avatar}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600"
-                  />
-                  {screens.md && (
-                    <div className="flex flex-col items-start">
-                      <Text strong className="text-sm">
-                        {user?.username || 'Admin'}
-                      </Text>
-                      <Text type="secondary" className="text-xs">
-                        {user?.role || 'Administrator'}
-                      </Text>
-                    </div>
-                  )}
-                </Space>
-              </Dropdown>
-            </div>
-          </div>
-        </Header>
+        {/* New Header Component */}
+        <AdminHeader 
+          collapsed={collapsed}
+          onToggle={() => setCollapsed(!collapsed)}
+          onThemeChange={handleThemeChange}
+          isDarkTheme={isDarkTheme}
+        />
 
         {/* Main Content */}
         <Content
@@ -206,7 +135,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           }}
           className="shadow-sm"
         >
-          {children}
+          <Outlet />
         </Content>
 
         {/* Footer */}
@@ -219,9 +148,20 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           className="shadow-inner"
         >
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <Text type="secondary">
-              © 2025 MyUrl.life Admin Dashboard. Kasun Development.
-            </Text>
+            <p>
+              © 2025 MyUrl.life Admin Dashboard • Kasun Development
+            </p>
+            <div className="flex space-x-4 mt-2 md:mt-0">
+              <p className="text-sm cursor-pointer hover:text-blue-600">
+                Privacy
+              </p>
+              <p className="text-sm cursor-pointer hover:text-blue-600">
+                Terms
+              </p>
+              <p className="text-sm cursor-pointer hover:text-blue-600">
+                Support
+              </p>
+            </div>
           </div>
         </Footer>
       </Layout>

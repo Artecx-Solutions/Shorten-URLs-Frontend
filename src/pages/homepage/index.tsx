@@ -7,10 +7,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useState } from 'react';
 import ModernURLShortener from './tabArea';
 import LandingPage from './landing';
-import Title from 'antd/es/skeleton/Title';
-import Paragraph from 'antd/es/skeleton/Paragraph';
+import { useNavigate } from 'react-router-dom';
 
 const Homepage = () => {
+
+  const navigate = useNavigate();
 
   const { isAuthenticated, user, logout } = useAuth();
 
@@ -20,6 +21,10 @@ const Homepage = () => {
 
   const showSignUpModal = () => {
     setIsSignUpModalVisible(true);
+  };
+
+  const gotoadmin = () => {
+    navigate('/login');
   };
 
   const showLoginModal = () => {
@@ -103,6 +108,14 @@ const Homepage = () => {
             >
               Get Started
             </Button>
+            <Button
+              type="primary"
+              variant="dashed"
+              onClick={gotoadmin}
+              className='font-semibold'
+            >
+              Admin Login
+            </Button>            
           </Space>  
 
         )}

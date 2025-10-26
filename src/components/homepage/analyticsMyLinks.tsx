@@ -19,7 +19,6 @@ import {
   CopyOutlined, 
   DeleteOutlined, 
   EyeOutlined, 
-  EditOutlined,
   SearchOutlined,
   LinkOutlined,
   LoginOutlined,
@@ -46,13 +45,13 @@ const AnalyticsMyLinks = () => {
     pages: 0
   });
   const [searchText, setSearchText] = useState('');
-  const [dataLoaded, setDataLoaded] = useState(false); // Add this to track if data is already loaded
+  const [dataLoaded, setDataLoaded] = useState(false);
   
   // Login modal state
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // Use AuthContext instead of local state
-  const { isAuthenticated, user, logout, checkAuth } = useAuth();
+  // Use AuthContext - remove checkAuth since it doesn't exist
+  const { isAuthenticated, user, logout } = useAuth();
 
   const {
     showSessionModal,
@@ -63,7 +62,6 @@ const AnalyticsMyLinks = () => {
 
   // Memoize the loadMyLinks function to prevent unnecessary re-renders
   const loadMyLinks = useCallback(async () => {
-    // Use isAuthenticated from context
     if (!isAuthenticated || dataLoaded) {
       return;
     }
@@ -73,7 +71,7 @@ const AnalyticsMyLinks = () => {
       const response: MyLinksResponse = await linkService.getMyLinks(pagination.page, pagination.limit);
       setLinks(response.links);
       setPagination(response.pagination);
-      setDataLoaded(true); // Mark data as loaded
+      setDataLoaded(true);
     } catch (error: any) {
       if (error.message?.includes('Session expired') || error.message?.includes('401')) {
         handleSessionError();
@@ -86,12 +84,10 @@ const AnalyticsMyLinks = () => {
     }
   }, [isAuthenticated, pagination.page, pagination.limit, dataLoaded, handleSessionError]);
 
-  // Check authentication status on component mount - only once
+  // Check authentication status on component mount
   useEffect(() => {
-    // Use checkAuth from context to verify current status
-    const authenticated = checkAuth();
-    
-    if (authenticated && !dataLoaded) {
+    // Remove checkAuth call - just use isAuthenticated from context
+    if (isAuthenticated && !dataLoaded) {
       loadMyLinks();
     }
     
@@ -101,14 +97,7 @@ const AnalyticsMyLinks = () => {
     return () => {
       unsubscribe();
     };
-  }, []); // Empty dependency array - run only once on mount
-
-  // Separate useEffect for when authentication changes
-  useEffect(() => {
-    if (isAuthenticated && !dataLoaded) {
-      loadMyLinks();
-    }
-  }, [isAuthenticated, dataLoaded, loadMyLinks]);
+  }, [isAuthenticated, dataLoaded, loadMyLinks, handleSessionError]); // Add dependencies
 
   const handleCopyLink = (shortCode: string) => {
     const shortUrl = `${window.location.origin}/${shortCode}`;
@@ -117,26 +106,18 @@ const AnalyticsMyLinks = () => {
   };
 
   const handleOpenLink = (shortCode: string) => {
-  try {
-    const frontendBaseUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
-    
-    // Remove any trailing slashes from base URL
-    const cleanBaseUrl = frontendBaseUrl.replace(/\/+$/, '');
-    
-    const fullUrl = `${cleanBaseUrl}/${shortCode}`;
-    
-    // Open in new tab with security attributes
-    window.open(fullUrl, '_blank', 'noopener,noreferrer');
-    
-  } catch (error) {
-    console.error('Error opening link:', error);
-    // Optional: Show error message to user
-    message.error('Failed to open link');
-  }
-};
+    try {
+      const frontendBaseUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
+      const cleanBaseUrl = frontendBaseUrl.replace(/\/+$/, '');
+      const fullUrl = `${cleanBaseUrl}/${shortCode}`;
+      window.open(fullUrl, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      console.error('Error opening link:', error);
+      message.error('Failed to open link');
+    }
+  };
 
   const handleDeleteLink = async (linkId: string, shortCode: string) => {
-    // Use isAuthenticated from context
     if (!isAuthenticated) {
       handleSessionError();
       return;
@@ -145,7 +126,6 @@ const AnalyticsMyLinks = () => {
     try {
       await linkService.deleteLink(shortCode);
       message.success('Link deleted successfully');
-      // Reset dataLoaded to false so it will reload fresh data
       setDataLoaded(false);
       loadMyLinks();
     } catch (error: any) {
@@ -163,11 +143,10 @@ const AnalyticsMyLinks = () => {
       page,
       limit: pageSize || prev.limit
     }));
-    // Reset dataLoaded when pagination changes to force reload
     setDataLoaded(false);
   };
 
-  // Effect to reload data when pagination changes and dataLoaded is false
+  // Effect to reload data when pagination changes
   useEffect(() => {
     if (isAuthenticated && !dataLoaded) {
       loadMyLinks();
@@ -179,7 +158,6 @@ const AnalyticsMyLinks = () => {
   };
 
   const handleLoginSuccess = () => {
-    // Reset dataLoaded to false so it will reload data after login
     setDataLoaded(false);
     message.success('Login successful! Loading your links...');
   };
@@ -194,7 +172,6 @@ const AnalyticsMyLinks = () => {
   };
 
   const handleRefresh = () => {
-    // Manual refresh - reset dataLoaded to force reload
     setDataLoaded(false);
   };
 
@@ -240,36 +217,35 @@ const AnalyticsMyLinks = () => {
         </Tag>
       ),
     },
-{
-  title: 'Status',
-  key: 'status',
-  width: 100,
-  render: (_, record) => {
-    const isExpired = new Date(record.expiresAt) < new Date();
-    const isActive = record.isActive;
-    
-    // Determine status based on both active flag and expiry
-    let status: string;
-    let color: string;
-    
-    if (isExpired) {
-      status = 'Expired';
-      color = 'red';
-    } else if (!isActive) {
-      status = 'Inactive';
-      color = 'orange';
-    } else {
-      status = 'Active';
-      color = 'green';
-    }
-    
-    return (
-      <Tag color={color}>
-        {status}
-      </Tag>
-    );
-  },
-},
+    {
+      title: 'Status',
+      key: 'status',
+      width: 100,
+      render: (_, record) => {
+        const isExpired = new Date(record.expiresAt) < new Date();
+        const isActive = record.isActive;
+        
+        let status: string;
+        let color: string;
+        
+        if (isExpired) {
+          status = 'Expired';
+          color = 'red';
+        } else if (!isActive) {
+          status = 'Inactive';
+          color = 'orange';
+        } else {
+          status = 'Active';
+          color = 'green';
+        }
+        
+        return (
+          <Tag color={color}>
+            {status}
+          </Tag>
+        );
+      },
+    },
     {
       title: 'Expires',
       dataIndex: 'expiresAt',
@@ -295,65 +271,65 @@ const AnalyticsMyLinks = () => {
         </Text>
       ),
     },
-{
-  title: 'Actions',
-  key: 'actions',
-  width: 250,
-  render: (_: any, record: ShortLink) => {
-    const isExpired = new Date(record.expiresAt) < new Date();
-    const isActive = record.isActive;
-    const canOpenLink = !isExpired && isActive;
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 250,
+      render: (_: any, record: ShortLink) => {
+        const isExpired = new Date(record.expiresAt) < new Date();
+        const isActive = record.isActive;
+        const canOpenLink = !isExpired && isActive;
 
-    return (
-      <Space size="small">
-        <Tooltip title={canOpenLink ? "Open Link" : isExpired ? "Link has expired" : "Link is inactive"}>
-          <Button 
-            icon={<LinkOutlined />} 
-            size="small"
-            type={canOpenLink ? "primary" : "default"}
-            danger={isExpired}
-            disabled={!canOpenLink}
-            onClick={() => canOpenLink && handleOpenLink(record.shortCode)}
-          >
-            {canOpenLink ? 'Open' : isExpired ? 'Expire' : 'Inactive'}
-          </Button>
-        </Tooltip>
-        
-        <Tooltip title="Copy short link">
-          <Button 
-            icon={<CopyOutlined />} 
-            size="small"
-            onClick={() => handleCopyLink(record.shortCode)}
-          />
-        </Tooltip>
-        
-        <Tooltip title="View analytics">
-          <Button 
-            icon={<EyeOutlined />} 
-            size="small"
-            onClick={() => message.info('Analytics feature coming soon!')}
-          />
-        </Tooltip>
-        
-        <Popconfirm
-          title="Delete this link?"
-          description="Are you sure you want to delete this short link?"
-          onConfirm={() => handleDeleteLink(record._id, record.shortCode)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Tooltip title="Delete">
-            <Button 
-              icon={<DeleteOutlined />} 
-              size="small" 
-              danger
-            />
-          </Tooltip>
-        </Popconfirm>
-      </Space>
-    );
-  },
-}
+        return (
+          <Space size="small">
+            <Tooltip title={canOpenLink ? "Open Link" : isExpired ? "Link has expired" : "Link is inactive"}>
+              <Button 
+                icon={<LinkOutlined />} 
+                size="small"
+                type={canOpenLink ? "primary" : "default"}
+                danger={isExpired}
+                disabled={!canOpenLink}
+                onClick={() => canOpenLink && handleOpenLink(record.shortCode)}
+              >
+                {canOpenLink ? 'Open' : isExpired ? 'Expire' : 'Inactive'}
+              </Button>
+            </Tooltip>
+            
+            <Tooltip title="Copy short link">
+              <Button 
+                icon={<CopyOutlined />} 
+                size="small"
+                onClick={() => handleCopyLink(record.shortCode)}
+              />
+            </Tooltip>
+            
+            <Tooltip title="View analytics">
+              <Button 
+                icon={<EyeOutlined />} 
+                size="small"
+                onClick={() => message.info('Analytics feature coming soon!')}
+              />
+            </Tooltip>
+            
+            <Popconfirm
+              title="Delete this link?"
+              description="Are you sure you want to delete this short link?"
+              onConfirm={() => handleDeleteLink(record._id, record.shortCode)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Tooltip title="Delete">
+                <Button 
+                  icon={<DeleteOutlined />} 
+                  size="small" 
+                  danger
+                />
+              </Tooltip>
+            </Popconfirm>
+          </Space>
+        );
+      },
+    }
   ];
 
   // Show loading while checking authentication
@@ -422,7 +398,6 @@ const AnalyticsMyLinks = () => {
           </div>
         </ConfigProvider>
 
-        {/* Login Modal */}
         <LoginModal
           visible={showLoginModal}
           onClose={handleLoginClose}
@@ -449,6 +424,7 @@ const AnalyticsMyLinks = () => {
             <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <Title level={4}>My Short Links</Title>
+                <Text type="secondary">Welcome back, {user?.name || user?.email}!</Text>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <Button 
@@ -511,7 +487,6 @@ const AnalyticsMyLinks = () => {
         </div>
       </ConfigProvider>
 
-      {/* Session Expired Modal */}
       <SessionExpiredModal
         visible={showSessionModal}
         onRedirectToLogin={handleLoginClick}

@@ -236,12 +236,12 @@ const LandingPage: React.FC = () => {
         <section className="py-16 lg:py-24 px-6 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <Title level={2} className="text-3xl lg:text-4xl font-bold mb-4">
-                Why <span className="text-blue-600">Thousands of Brands</span> Choose Short.ly
-              </Title>
-              <Paragraph className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <h1 className="text-4xl lg:text-5xl font-bold mb-6 !text-gray-900 leading-tight lineH">
+                Why <span className="text-blue-600">Thousands of Brands</span> <br/>Choose Short.ly
+              </h1>
+              <p className="text-lg lg:text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed para">
                 Everything you need to create, manage, and analyze your links in one powerful platform.
-              </Paragraph>
+              </p>
             </div>
 
             <Row gutter={[32, 32]}>
@@ -278,12 +278,12 @@ const LandingPage: React.FC = () => {
         <section className="py-16 lg:py-24 px-6 bg-gray-50">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <Title level={2} className="text-3xl lg:text-4xl font-bold mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold mb-6 !text-gray-900 leading-tight lineH">
                 Trusted by <span className="text-blue-600">Amazing Teams</span>
-              </Title>
-              <Paragraph className="text-xl text-gray-600 max-w-2xl mx-auto">
+              </h1>
+              <p className="text-lg lg:text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed para">
                 Join thousands of satisfied users who transformed their link management with Short.ly
-              </Paragraph>
+              </p>
             </div>
 
             <Row gutter={[32, 32]}>
@@ -322,12 +322,12 @@ const LandingPage: React.FC = () => {
         <section className="py-16 lg:py-24 px-6 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <Title level={2} className="text-3xl lg:text-4xl font-bold mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold mb-6 !text-gray-900 leading-tight lineH">
                 Simple, <span className="text-blue-600">Transparent Pricing</span>
-              </Title>
-              <Paragraph className="text-xl text-gray-600 max-w-2xl mx-auto">
+              </h1>
+              <p className="text-lg lg:text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed para">
                 Choose the plan that works best for you. All plans include core features.
-              </Paragraph>
+              </p>
             </div>
 
             <Row gutter={[32, 32]} justify="center">
@@ -400,9 +400,9 @@ const LandingPage: React.FC = () => {
         {/* CTA Section */}
         <section className="py-16 lg:py-24 px-6 bg-gradient-to-r from-blue-600 to-purple-700">
           <div className="max-w-4xl mx-auto text-center">
-            <Title level={2} className="text-3xl lg:text-4xl font-bold mb-6 !text-white">
+            <h1 className="text-4xl lg:text-5xl font-bold mb-6 !text-gray-900 leading-tight !text-white">
               Ready to Transform Your Link Strategy?
-            </Title>
+            </h1>
             <Paragraph className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
               Join thousands of marketers, creators, and businesses using Short.ly to drive better results.
             </Paragraph>
