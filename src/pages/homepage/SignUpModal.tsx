@@ -39,9 +39,12 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 
       await authService.signUp(signUpData);
       
-      message.success('Account created successfully! Welcome to Short.ly!');
+      message.success('Account created successfully! Welcome to MyUrl');
       form.resetFields();
       onClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
       
       if (onSuccess) {
         onSuccess();
@@ -50,6 +53,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
       message.error(error instanceof Error ? error.message : 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
+      
     }
   };
 
@@ -87,7 +91,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
       title={
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Create Your Account</h2>
-          <p className="text-gray-600">Join Short.ly and start shortening URLs</p>
+          <p className="text-gray-600">Join MyUrl.life and start shortening URLs</p>
         </div>
       }
       open={visible}

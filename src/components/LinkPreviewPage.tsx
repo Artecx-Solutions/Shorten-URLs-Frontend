@@ -420,7 +420,7 @@ const LinkPreviewPage: React.FC = () => {
                       <div>
                         <h3 className="font-medium text-gray-800">Secure Redirect</h3>
                         <p className="text-sm text-gray-600">
-                          This link is being safely redirected through Short.ly. {redirecting ? 'Redirecting now...' : 'You\'ll be taken to the destination shortly.'}
+                          This link is being safely redirected through MyUrl.life {redirecting ? 'Redirecting now...' : 'You\'ll be taken to the destination shortly.'}
                         </p>
                       </div>
                     </div>

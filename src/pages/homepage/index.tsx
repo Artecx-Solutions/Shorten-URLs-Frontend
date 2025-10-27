@@ -1,5 +1,5 @@
 import { Avatar, Button, Dropdown, Menu, Space, Tag, } from 'antd';
-import {LoginOutlined, LogoutOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
+import {DownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import SignUpModal from './SignUpModal';
 import LoginModal from './loginModal';
 import { authService } from '../../services/authService';
@@ -44,9 +44,6 @@ const Homepage = () => {
 
   const userMenu = (
     <Menu>
-      <Menu.Item key="profile" icon={<UserOutlined />}>
-        Profile
-      </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
         Logout
@@ -90,6 +87,7 @@ const Homepage = () => {
                 className="bg-gradient-to-r from-blue-500 to-purple-600"
               />
               <span className="text-gray-700">{user.fullName}</span>
+              <DownOutlined />
             </Button>
           </Dropdown>
         ) : (
