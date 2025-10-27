@@ -13,7 +13,7 @@ import {
   SettingOutlined,
   BarChartOutlined
 } from '@ant-design/icons';
-import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet, Link } from 'react-router-dom';
 import AdminHeader from './AdminHeader'; // Import the new header
 
 const { Sider, Content, Footer } = Layout;
@@ -45,17 +45,7 @@ const AdminLayout: React.FC = () => {
       key: '/admin/users',
       icon: <TeamOutlined />,
       label: 'User Management',
-    },
-    {
-      key: '/admin/analytics',
-      icon: <BarChartOutlined />,
-      label: 'Analytics',
-    },
-    {
-      key: '/admin/settings',
-      icon: <SettingOutlined />,
-      label: 'Settings',
-    },
+    }
   ];
 
   const handleMenuClick = ({ key }: { key: string }) => {
@@ -91,11 +81,15 @@ const AdminLayout: React.FC = () => {
         {!collapsed && (
           <div className="flex items-center justify-center p-6 border-b border-gray-200">
             <div className="text-center">
+              <Link to="/">
               <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2">
                 <span className="text-white font-bold text-lg">ML</span>
               </div>
+              </Link>
+               <Link to="/">
               <span className="text-sm font-semibold text-gray-700">MyUrl.life</span>
               <div className="text-xs text-gray-500 mt-1">Admin System</div>
+              </Link>
             </div>
           </div>
         )}

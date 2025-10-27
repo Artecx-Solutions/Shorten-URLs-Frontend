@@ -112,7 +112,9 @@ export class ApiService {
     });
   }
 
-  async delete(endpoint: string): Promise<{ success: boolean; message?: string }> {
+  async delete(endpoint: string): Promise<{
+      data: boolean; success: boolean; message?: string 
+}> {
     return this.makeRequest(endpoint, {
       method: 'DELETE',
     });

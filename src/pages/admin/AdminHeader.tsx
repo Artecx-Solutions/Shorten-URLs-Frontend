@@ -16,7 +16,7 @@ import {
   UserOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services/authService';
 
 const { Header } = Layout;
@@ -41,27 +41,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
     navigate('/login');
   };
 
-  const handleProfile = () => {
-    navigate('/admin/profile');
-  };
-
-  const handleSettings = () => {
-    navigate('/admin/settings');
-  };
-
   const userMenuItems = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: 'Profile',
-      onClick: handleProfile,
-    },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: 'Settings',
-      onClick: handleSettings,
-    },
     {
       type: 'divider' as const,
     },
@@ -119,9 +99,11 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
             </div>
             {!collapsed && (
               <div className="hidden md:block">
+                 <Link to="/">
                 <Text strong className="text-white text-lg tracking-tight">
-                  MyUrl.life Admin Panel
+                  MyUrl.life
                 </Text>
+                </Link>
               </div>
             )}
           </div>
@@ -164,25 +146,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
           </Dropdown>
         </div>
       </div>
-
-      <style jsx>{`
-        .admin-header-dropdown .ant-dropdown-menu {
-          border-radius: 12px;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-          border: 1px solid #f0f0f0;
-        }
-        
-        .admin-header-dropdown .ant-dropdown-menu-item {
-          padding: 8px 16px;
-          margin: 2px 8px;
-          border-radius: 8px;
-        }
-        
-        .admin-header-dropdown .ant-dropdown-menu-item:hover {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-        }
-      `}</style>
     </Header>
   );
 };

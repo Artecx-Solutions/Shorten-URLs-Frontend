@@ -108,7 +108,7 @@ const LandingPage: React.FC = () => {
       name: 'Sarah Chen',
       role: 'Marketing Director',
       company: 'TechCorp',
-      content: 'Short.ly transformed our marketing campaigns. The analytics helped us understand our audience better.',
+      content: 'MyUrl.life transformed our marketing campaigns. The analytics helped us understand our audience better.',
       avatar: 'SC',
       rating: 5
     },
@@ -124,7 +124,7 @@ const LandingPage: React.FC = () => {
       name: 'Emily Davis',
       role: 'Startup Founder',
       company: 'InnovateLab',
-      content: 'As a startup, we needed reliable link management. Short.ly delivered beyond expectations.',
+      content: 'As a startup, we needed reliable link management. MyUrl.life delivered beyond expectations.',
       avatar: 'ED',
       rating: 4
     }
@@ -237,7 +237,7 @@ const LandingPage: React.FC = () => {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h1 className="text-4xl lg:text-5xl font-bold mb-6 !text-gray-900 leading-tight lineH">
-                Why <span className="text-blue-600">Thousands of Brands</span> <br/>Choose Short.ly
+                Why <span className="text-blue-600">Thousands of Brands</span> <br/>Choose MyUrl.life
               </h1>
               <p className="text-lg lg:text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed para">
                 Everything you need to create, manage, and analyze your links in one powerful platform.
@@ -282,7 +282,7 @@ const LandingPage: React.FC = () => {
                 Trusted by <span className="text-blue-600">Amazing Teams</span>
               </h1>
               <p className="text-lg lg:text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed para">
-                Join thousands of satisfied users who transformed their link management with Short.ly
+                Join thousands of satisfied users who transformed their link management with MyUrl.life
               </p>
             </div>
 
@@ -404,7 +404,7 @@ const LandingPage: React.FC = () => {
               Ready to Transform Your Link Strategy?
             </h1>
             <Paragraph className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of marketers, creators, and businesses using Short.ly to drive better results.
+              Join thousands of marketers, creators, and businesses using MyUrl.life to drive better results.
             </Paragraph>
             
             <Space size="large" direction={screens.xs ? "vertical" : "horizontal"}>
