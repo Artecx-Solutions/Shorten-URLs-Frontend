@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, message, Typography } from 'antd';
-import { UserOutlined, LockOutlined, IeOutlined, LoginOutlined, MailOutlined } from '@ant-design/icons';
+import { LockOutlined, IeOutlined, LoginOutlined, MailOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import { useAuth } from '../../contexts/AuthContext';
@@ -84,6 +84,7 @@ const AdminLoginForm: React.FC = () => {
           layout="vertical"
           requiredMark={false}
           size="large"
+          autoComplete="off"
         >
           <Form.Item
             name="email"
@@ -97,7 +98,7 @@ const AdminLoginForm: React.FC = () => {
               prefix={<MailOutlined className="text-gray-400" />}
               placeholder="Enter admin email"
               className="rounded-lg h-12 hover:border-blue-400 focus:border-blue-500"
-              autoComplete="email"
+             autoComplete="new-email"
             />
           </Form.Item>
 
@@ -113,7 +114,7 @@ const AdminLoginForm: React.FC = () => {
               prefix={<LockOutlined className="text-gray-400" />}
               placeholder="Enter your password"
               className="rounded-lg h-12 hover:border-blue-400 focus:border-blue-500"
-              autoComplete="current-password"
+              autoComplete="new-password"
             />
           </Form.Item>
 

@@ -1,7 +1,7 @@
 // components/UserManagement.tsx
 import React, { useState, useEffect } from 'react';
 import { Table, Card, Button, Tag, Space, message, Popconfirm, Input, Pagination } from 'antd';
-import { SearchOutlined, EditOutlined, DeleteOutlined, UserOutlined, CrownOutlined } from '@ant-design/icons';
+import { DeleteOutlined, UserOutlined, CrownOutlined } from '@ant-design/icons';
 import { adminService } from '../../services/adminService';
 import { User, UsersResponse } from '../../types/admin';
 

@@ -1,5 +1,5 @@
 // components/AnalyticsMyLinks.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Table, 
   Card, 
@@ -19,7 +19,6 @@ import {
   DeleteOutlined, 
   EyeOutlined, 
   EditOutlined,
-  SearchOutlined,
   LinkOutlined
 } from '@ant-design/icons';
 import { ConfigProvider } from 'antd';

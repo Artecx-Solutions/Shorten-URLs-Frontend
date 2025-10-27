@@ -9,19 +9,14 @@ import {
   Typography,
   Space,
   Divider,
-  Tag,
-  Input,
-  Form,
   List,
   Avatar,
   Grid,
-  Timeline,
   Badge,
   Rate,
   Modal
 } from 'antd';
 import {
-  RocketOutlined,
   BarChartOutlined,
   SafetyCertificateOutlined,
   GlobalOutlined,
@@ -30,23 +25,18 @@ import {
   CrownOutlined,
   CheckCircleOutlined,
   PlayCircleOutlined,
-  StarFilled,
   UserOutlined,
-  ArrowRightOutlined,
-  SearchOutlined,
   DownloadOutlined,
   MessageOutlined,
   TeamOutlined,
   SecurityScanOutlined,
   BulbOutlined
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import LoginModal from './../homepage/loginModal';
 import SignupModal from './../homepage/SignUpModal';
+import { Content, Footer } from 'antd/es/layout/layout';
 
-const { Header, Content, Footer } = Layout;
 const { Title, Paragraph, Text } = Typography;
-const { Search } = Input;
 const { useBreakpoint } = Grid;
 
 const LandingPage: React.FC = () => {
@@ -55,7 +45,6 @@ const LandingPage: React.FC = () => {
   const [urlInput, setUrlInput] = useState('');
   const [loading, setLoading] = useState(false);
   const screens = useBreakpoint();
-  const navigate = useNavigate();
 
   const features = [
     {
@@ -179,22 +168,6 @@ const LandingPage: React.FC = () => {
       popular: false
     }
   ];
-
-  const handleShorten = async () => {
-    if (!urlInput.trim()) return;
-
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      Modal.success({
-        title: 'URL Shortened Successfully!',
-        content: 'Sign up to save and manage your shortened URLs.',
-        okText: 'Sign Up Now',
-        onOk: () => setSignupVisible(true)
-      });
-    }, 1000);
-  };
 
   return (
     <Layout className="min-h-screen bg-white">

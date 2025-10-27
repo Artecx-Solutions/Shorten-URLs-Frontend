@@ -8,7 +8,7 @@ interface SignUpModalProps {
   visible: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-  onSwitchToLogin?: () => void;
+  onSwitchToLogin: () => void;
 }
 
 interface FormValues {
@@ -53,7 +53,6 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
       message.error(error instanceof Error ? error.message : 'Signup failed. Please try again.');
     } finally {
       setLoading(false);
-      
     }
   };
 
@@ -80,10 +79,9 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
   };
 
   const handleSwitchToLogin = () => {
-    handleCancel();
-    if (onSwitchToLogin) {
-      onSwitchToLogin();
-    }
+    console.log("SIGNUP MODAL: Switching to login modal");
+    // Call the parent handler - this will handle closing this modal and opening login
+    onSwitchToLogin();
   };
 
   return (
@@ -100,6 +98,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
       centered
       width={400}
       className="rounded-xl"
+      destroyOnClose={true} // Add this to ensure clean state
     >
       <Form
         form={form}
@@ -107,6 +106,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
         onFinish={handleSubmit}
         className="mt-6"
         requiredMark={false}
+        autoComplete="off"
       >
         <Form.Item
           name="fullName"
@@ -121,6 +121,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
             placeholder="Enter your full name"
             size="large"
             className="rounded-lg hover:border-blue-400 focus:border-blue-500"
+            autoComplete="off"
           />
         </Form.Item>
 
@@ -137,6 +138,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
             placeholder="Enter your email"
             size="large"
             className="rounded-lg hover:border-blue-400 focus:border-blue-500"
+            autoComplete="off"
           />
         </Form.Item>
 
@@ -144,7 +146,6 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
           name="password"
           label="Password"
           rules={[
-            { required: true, message: 'Please input your password!' },
             { validator: validatePassword }
           ]}
         >
@@ -153,6 +154,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
             placeholder="Create a password"
             size="large"
             className="rounded-lg hover:border-blue-400 focus:border-blue-500"
+            autoComplete="new-password"
           />
         </Form.Item>
 
@@ -170,6 +172,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
             placeholder="Confirm your password"
             size="large"
             className="rounded-lg hover:border-blue-400 focus:border-blue-500"
+            autoComplete="new-password"
           />
         </Form.Item>
 
