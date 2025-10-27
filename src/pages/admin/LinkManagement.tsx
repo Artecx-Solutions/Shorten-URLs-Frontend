@@ -13,22 +13,19 @@ import {
   Select,
   Tooltip,
   Badge,
-  Switch
 } from 'antd';
 import { 
-  SearchOutlined, 
   DeleteOutlined, 
   EyeOutlined, 
   LinkOutlined, 
   UserOutlined,
-  FilterOutlined,
-  ExportOutlined
 } from '@ant-design/icons';
 import { adminLinksService } from '../../services/adminLinksService';
 import { AdminLink, AdminLinksResponse } from '../../types/admin';
 
 const { Option } = Select;
 const { Search } = Input;
+
 
 const LinkManagement: React.FC = () => {
   const [links, setLinks] = useState<AdminLink[]>([]);
@@ -87,18 +84,6 @@ const LinkManagement: React.FC = () => {
 
   const handlePageChange = (page: number) => {
     loadLinks(page);
-  };
-
-  const handleStatusChange = async (linkId: string, isActive: boolean) => {
-    try {
-      const updatedLink = await adminLinksService.updateLinkStatus(linkId, isActive);
-      setLinks(prev => prev.map(link => 
-        link._id === linkId ? updatedLink : link
-      ));
-      message.success(`Link ${isActive ? 'activated' : 'deactivated'} successfully`);
-    } catch (error: any) {
-      message.error(error.message || 'Failed to update link status');
-    }
   };
 
   const handleDeleteLink = async (linkId: string) => {
@@ -182,7 +167,7 @@ const LinkManagement: React.FC = () => {
           <Space>
             <UserOutlined />
             <span>{user.fullName}</span>
-            <Tag size="small" color={user.role === 'admin' ? 'gold' : 'blue'}>
+            <Tag color={user.role === 'admin' ? 'gold' : 'blue'}>
               {user.role}
             </Tag>
           </Space>
@@ -200,12 +185,6 @@ const LinkManagement: React.FC = () => {
           <Tag color={getStatusColor(record)}>
             {getStatusText(record)}
           </Tag>
-          <Switch
-            size="small"
-            checked={record.isActive}
-            onChange={(checked) => handleStatusChange(record._id, checked)}
-            disabled={isLinkExpired(record.expiresAt)}
-          />
         </Space>
       ),
     },
@@ -259,9 +238,6 @@ const LinkManagement: React.FC = () => {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Link Management</h2>
-          <Button icon={<ExportOutlined />} type="primary">
-            Export
-          </Button>
         </div>
 
         {/* Filters */}
@@ -324,7 +300,7 @@ const LinkManagement: React.FC = () => {
             total={pagination.total}
             onChange={handlePageChange}
             showSizeChanger
-            onShowSizeChange={(current, size) => {
+            onShowSizeChange={(_current, size) => {
               setPagination(prev => ({...prev, limit: size}));
               loadLinks(1);
             }}

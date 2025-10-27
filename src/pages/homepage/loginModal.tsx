@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Button, message } from 'antd';
 import { authService } from '../../services/authService';
-import { useAuth } from '../../contexts/AuthContext'; // Import useAuth
+import { useAuth } from '../../contexts/AuthContext';
 import { LoginRequest } from '../../types/auth';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 
@@ -9,7 +9,7 @@ interface LoginModalProps {
   visible: boolean;
   onClose: () => void;
   onSuccess?: () => void;
-  onSwitchToSignup?: () => void;
+  onSwitchToSignup: () => void;
 }
 
 interface FormValues {
@@ -21,11 +21,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
   visible, 
   onClose, 
   onSuccess,
-  onSwitchToSignup 
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth(); // Get login function from AuthContext
+  const { login } = useAuth();
 
   const handleSubmit = async (values: FormValues) => {
     setLoading(true);
@@ -39,10 +38,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
       const response = await authService.login(loginData);
       console.log('Login response:', response);
       
-      // Use the AuthContext login function to update global state
       login(response.accessToken, response.user);
       
-      // Show API response message if available, otherwise default message
       const successMessage = response.message || 'Welcome back! Login successful!';
       console.log(successMessage);
       message.success(successMessage);
@@ -65,12 +62,19 @@ const LoginModal: React.FC<LoginModalProps> = ({
     onClose();
   };
 
-  const handleSwitchToSignup = () => {
-    handleCancel();
-    if (onSwitchToSignup) {
-      onSwitchToSignup();
-    }
-  };
+const handleSwitchToSignup = () => {
+  console.log("LOGIN MODAL: Emergency switch to signup");
+  // Force close this modal and trigger signup modal
+  onClose(); // Close current modal
+  
+  // Use setTimeout to ensure modal closes before opening new one
+  setTimeout(() => {
+    // You might need to access the parent's state directly
+    // This is a workaround - ideally the parent should handle this
+    const event = new CustomEvent('openSignupModal');
+    window.dispatchEvent(event);
+  }, 100);
+};
 
   return (
     <Modal
@@ -86,14 +90,15 @@ const LoginModal: React.FC<LoginModalProps> = ({
       centered
       width={400}
       className="rounded-xl"
+      destroyOnClose={true} // Add this to ensure clean state
     >
-
       <Form
         form={form}
         layout="vertical"
         onFinish={handleSubmit}
         className="mt-4"
         requiredMark={false}
+        autoComplete="off"
       >
         <Form.Item
           name="email"
@@ -108,6 +113,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             placeholder="Enter your email"
             size="large"
             className="rounded-lg hover:border-blue-400 focus:border-blue-500"
+            autoComplete="off"
           />
         </Form.Item>
 
@@ -124,9 +130,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
             placeholder="Enter your password"
             size="large"
             className="rounded-lg hover:border-blue-400 focus:border-blue-500"
+            autoComplete="new-password"
           />
         </Form.Item>
-
 
         <Form.Item className="mb-0">
           <Button

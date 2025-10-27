@@ -221,7 +221,7 @@ const AnalyticsMyLinks = () => {
       title: 'Status',
       key: 'status',
       width: 100,
-      render: (_, record) => {
+      render: (_: any, record: { expiresAt: string | number | Date; isActive: any; }) => {
         const isExpired = new Date(record.expiresAt) < new Date();
         const isActive = record.isActive;
         
